@@ -19,7 +19,7 @@ else:
     webdriver.ActionChains(driver).click(ITbutton).perform()
     webdriver.ActionChains(driver).release().perform()
     driver.implicitly_wait(5)
-    driver.find_element_by_xpath('//input[@name="passwd"]').send_keys("Nut5flower#"+Keys.ENTER)
+    driver.find_element_by_xpath('//input[@name="passwd"]').send_keys(""+Keys.ENTER)
     driver.implicitly_wait(5)
     driver.find_element_by_xpath('//input[@id="idSIButton9"]').send_keys(Keys.ENTER)
     
