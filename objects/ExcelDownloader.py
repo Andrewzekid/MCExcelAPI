@@ -10,7 +10,6 @@ import time
 import pandas as pd
 from selenium.webdriver.common.keys import Keys
 
-from AnswerDetection.mergeleaderboard import find_newly_downloaded_files
 
 
 class ExcelDownloader:
@@ -41,35 +40,36 @@ class ExcelDownloader:
 
     @staticmethod
     def move_excel_file_into_current_directory() -> str:
-        excel_files = find_newly_downloaded_files()
-        #integration test
-        # assert str(path) == "C:/Users/yw347/Downloads"
+        current_path = pathlib.Path("C:/Users/yw347/Downloads")
+        answer_detection = current_path.resolve() / "AnswerDetection"
+        excel_files = list(answer_detection.glob("*.xlsx"))
+        if excel_files != None:
+            print("Found: {}".format(str(excel_files[0])))
+            return str(excel_files[0])
+        else:
+            raise OSError("No New Excel Download Data Detected at: {}".format(str(current_path)))
 
-
-    def find_newly_downloaded_files():
+    def find_newly_downloaded_files(self,label):
+        excel_name = self.predict_file_name(label)
         current_path = pathlib.Path("C:/Users/yw347/Downloads")
         weekly_scores = None
         weekly_leaderboard = None
-        answer_detection = current_path.resolve() / "AnswerDetection"
-        excel_files = list(answer_detection.glob("*.xlsx"))
+        excel_files = list(current_path.glob("*.xlsx"))
+
         print(excel_files)
         for file in excel_files:
             print(file.as_posix())
-            if("Math Commitee Week" in file.as_posix()):
+            if(excel_name in file.as_posix()):
                 weekly_scores = file.as_posix()
-            elif ("Leaderboard" in file.as_posix()):
-                #file containing the data for the current leaderboard
-                weekly_leaderboard = file.as_posix()
-            if weekly_leaderboard != None and weekly_scores != None:   
-                return (weekly_scores,weekly_leaderboard)
-            else:
-                raise OSError("No Leaderboard/New weekly data found in file {}".format(str(answer_detection)))
+                return weekly_scores
+                
+        raise OSError("No Leaderboard/New weekly data found in file {}".format(str(current_path)))
     
-
 
         
     @staticmethod
     def LocateMoveAndClick(path,confidence=0.9):
+        time.sleep(1)
         position_of_signin = pyautogui.locateCenterOnScreen(path,confidence=confidence)
         pyautogui.moveTo(position_of_signin[0],position_of_signin[1],duration=2)
         pyautogui.click(button="left")
