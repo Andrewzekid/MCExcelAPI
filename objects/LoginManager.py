@@ -21,6 +21,7 @@ class LoginManager:
 
     #code to login
     def login(self):
+        time.sleep(2)
         driver = self.driver
         try:
             element = WebDriverWait(driver,50).until(

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # Logins = LoginManager(driver)
     # ExcelDownloading = ExcelDownloader(driver)
     # ExcelManagement = ExcelManager(driver)
-    basepath = os.path.join(os.getcwd(),"AnswerDetection")
+    basepath = os.getcwd()
 
     driver = webdriver.Chrome("C:\Program Files (x86)\chromedriver_win32\chromedriver.exe")
     driver.get("https://www.office.com/launch/forms?auth=2")
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     ExcelOperator.LocateMoveAndClick(str(os.path.join(basepath,"Box2.png")),confidence=0.8)
     time.sleep(4)
     LoginOperator.login()
-    time.sleep(2)
+    time.sleep(4)
     result_list = ExcelOperator.scrape_excel_blocks()
 
     for link,label in result_list:
@@ -58,8 +58,9 @@ if __name__ == "__main__":
 
 
     #move newly downloaded file
-    new_file = ExcelOperator.move_excel_file_into_current_directory()
-    shutil.move(new_file,basepath)
+    time.sleep(4)
+    weekly_scores = ExcelOperator.find_newly_downloaded_files(final_label)
+    shutil.move(weekly_scores,basepath)
 
     #initialize the excel leaderboard object which will scrape the leaderboard table
     ExcelLeaderBoard = LeaderboardManager(driver=driver)
@@ -80,12 +81,12 @@ if __name__ == "__main__":
     df = LeaderboardManager.clean_leaderboard_table(ac)
     LeaderboardManager.save_results(df,os.path.join(os.getcwd(),"AnswerDetection","Math Commitee Leaderboard.xlsx"))
 
-    (weekly_scores,weekly_leaderboard) = ExcelManager.find_newly_downloaded_files()
+    weekly_leaderboard = ExcelManager.find_newly_downloaded_files()
     ExcelManagement = ExcelManager.read_excel_file(path=str(weekly_scores,weekly_leaderboard))
     updated = ExcelManagement.update_leaderboard()
     
     LeaderboardManager.save_results(updated,os.path.join(os.getcwd(),"AnswerDetection","Math Commitee Leaderboard New.xlsx"))
-
+    driver.close()
 
 
 
